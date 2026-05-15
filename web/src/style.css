@@ -1,0 +1,1071 @@
+/* ---------------------------------------------------------------------------
+ * Design system — structural only.
+ *
+ * Color tokens already defined in T5 below remain canonical. Content-specific
+ * styles (hero photo, skill badges, etc.) belong to T10–T13, not here.
+ * ------------------------------------------------------------------------- */
+
+/* --- Reset ---------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* --- Tokens: colors (T5) -------------------------------------------------- */
+
+:root {
+  --bg: #ffffff;
+  --fg: #1a1a1a;
+  --muted: #6b6b6b;
+  --accent: #2456e6;
+  --border: #e5e5e5;
+}
+
+:root[data-theme="dark"] {
+  --bg: #111418;
+  --fg: #ececec;
+  --muted: #9a9a9a;
+  --accent: #6b8cff;
+  --border: #2a2f36;
+}
+
+/* --- Tokens: spacing, layout, type, motion -------------------------------- */
+
+:root {
+  /* Spacing scale — geometric-ish, 0.25rem base. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+
+  /* Layout */
+  --measure: 64rem;
+  --gutter: clamp(1rem, 4vw, 2rem);
+
+  /* Typography — modular scale ratio ≈ 1.2, fluid via clamp. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --fs-body: 1rem;
+  --fs-h3: clamp(1.125rem, 0.95rem + 0.6vw, 1.375rem);
+  --fs-h2: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  --fs-h1: clamp(2rem, 1.5rem + 2.4vw, 3.25rem);
+  --lh-body: 1.6;
+  --lh-heading: 1.15;
+
+  /* Effects */
+  --radius: 0.5rem;
+  --radius-sm: 0.25rem;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
+  --transition: 0.2s ease;
+}
+
+:root[data-theme="dark"] {
+  /* Drop the soft drop shadow under dark — looks muddy. */
+  --shadow-card: none;
+}
+
+/* --- Base elements -------------------------------------------------------- */
+
+html {
+  /* Anchor scroll lands below the sticky header. */
+  scroll-padding-top: 5rem;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  background: var(--bg);
+  color: var(--fg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition:
+    background-color var(--transition),
+    color var(--transition);
+}
+
+h1,
+h2,
+h3 {
+  margin: 0 0 var(--space-3) 0;
+  line-height: var(--lh-heading);
+  letter-spacing: -0.01em;
+  font-weight: 600;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+}
+
+p {
+  margin: 0 0 var(--space-3) 0;
+}
+
+a {
+  color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+  transition: color var(--transition);
+}
+
+a:hover {
+  color: var(--fg);
+}
+
+img,
+svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* --- Focus ring ----------------------------------------------------------- */
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+/* --- Skip link (T13, a11y) ----------------------------------------------- */
+
+/*
+ * Off-screen by default; brought into view at top-left when focused via Tab so
+ * keyboard users can jump straight to <main id="main">. Sits as the very first
+ * child of #app, before <header>, so it is the first tab stop.
+ */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 100;
+  padding: var(--space-2) var(--space-3);
+  background: var(--accent);
+  color: var(--bg);
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+}
+
+.skip-link:focus,
+.skip-link:focus-visible {
+  left: var(--space-2);
+  top: var(--space-2);
+  outline: 2px solid var(--bg);
+  outline-offset: 2px;
+}
+
+/* --- Header / nav --------------------------------------------------------- */
+
+#app > header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter);
+  background: color-mix(in srgb, var(--bg) 85%, transparent);
+  backdrop-filter: saturate(160%) blur(8px);
+  -webkit-backdrop-filter: saturate(160%) blur(8px);
+  border-bottom: 1px solid var(--border);
+}
+
+#app > header nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+}
+
+#app > header nav a {
+  color: var(--fg);
+  text-decoration: none;
+  font-weight: 500;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+  transition:
+    color var(--transition),
+    background-color var(--transition);
+}
+
+#app > header nav a:hover,
+#app > header nav a:focus-visible {
+  color: var(--accent);
+}
+
+/* Theme toggle pill. */
+.theme-toggle {
+  font: inherit;
+  color: var(--fg);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-3);
+  cursor: pointer;
+  line-height: 1.2;
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* --- Sections / layout container ----------------------------------------- */
+
+/*
+ * Sections live inside <main id="main"> (T13). Apply the layout container
+ * directly to each section so existing markup gets the measure + gutter +
+ * vertical rhythm for free.
+ */
+#main > section {
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding: var(--space-7) var(--gutter);
+}
+
+/* Subtle alternating background — every 2nd section painted with --muted as
+ * a very low-saturation tint. Kept opt-in via a class would be nicer, but
+ * with no DOM changes allowed we use :nth-of-type. Bleed full-width by
+ * pulling the section out of the container with a negative margin and a
+ * full-bleed pseudo background — but simpler: drop alternation, the design
+ * stays clean enough with only the header border. */
+
+/* --- Utility: container --------------------------------------------------- */
+
+.container {
+  width: 100%;
+  max-width: var(--measure);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* --- Utility: card ------------------------------------------------------- */
+
+.card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  background: var(--bg);
+  box-shadow: var(--shadow-card);
+}
+
+/* --- Utility: badge ------------------------------------------------------ */
+
+.badge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  line-height: 1.2;
+  background: transparent;
+}
+
+/* --- Theme toggle inherits transition (carried from T5) ------------------ */
+
+.theme-toggle {
+  /* keep T5 transition behavior */
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color var(--transition);
+}
+
+/* --- Responsive ---------------------------------------------------------- */
+
+@media (min-width: 48rem) {
+  #main > section {
+    padding-block: var(--space-8);
+  }
+}
+
+/* --- Scroll-reveal (T10, RESEARCH §1) ------------------------------------ */
+
+/*
+ * Sections fade + lift in the first time they intersect. The IntersectionObserver
+ * in scroll.ts adds `.is-visible`. Header is outside <section> so it is unaffected.
+ * Reduced-motion users skip the observer entirely; the @media rule below also
+ * forces the visible state in CSS for belt-and-braces correctness.
+ */
+section {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease;
+}
+
+section.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* --- Hero (T10) ---------------------------------------------------------- */
+
+.hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-5);
+  text-align: center;
+}
+
+.hero-photo {
+  flex: 0 0 auto;
+  width: min(14rem, 35vw);
+  aspect-ratio: 1 / 1;
+}
+
+.hero-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+}
+
+.hero-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+}
+
+.hero-text h1 {
+  margin: 0;
+}
+
+.hero-title {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.hero-tagline {
+  margin: var(--space-2) 0 0 0;
+  font-style: italic;
+  color: var(--muted);
+  letter-spacing: 0.01em;
+}
+
+.hero-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  margin-top: var(--space-4);
+  justify-content: center;
+}
+
+@media (min-width: 48rem) {
+  .hero {
+    flex-direction: row;
+    align-items: center;
+    text-align: left;
+    gap: var(--space-6);
+  }
+
+  .hero-text {
+    align-items: flex-start;
+  }
+
+  .hero-ctas {
+    justify-content: flex-start;
+  }
+}
+
+/* --- Buttons (T10) ------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  font: inherit;
+  font-weight: 500;
+  line-height: 1.2;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color var(--transition),
+    color var(--transition),
+    border-color var(--transition),
+    transform var(--transition);
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.btn-primary:hover {
+  /* Slight darken via color-mix; keeps single accent token. */
+  background: color-mix(in srgb, var(--accent) 85%, var(--fg));
+  border-color: color-mix(in srgb, var(--accent) 85%, var(--fg));
+  color: var(--bg);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--fg);
+  border-color: var(--border);
+}
+
+.btn-secondary:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-tertiary {
+  background: transparent;
+  color: var(--accent);
+  border-color: transparent;
+  padding-inline: var(--space-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.btn-tertiary:hover {
+  color: var(--fg);
+}
+
+/* Print-only CTA (swapped in for "Download CV" — see @media print below). */
+.hero-cta-website {
+  display: none;
+}
+
+/* --- Card hover (T11 — RESEARCH §1) -------------------------------------- */
+
+/*
+ * Subtle 1px lift + accent border on hover. Applied even though no .card
+ * markup exists yet — harmless and ready for T12 Notable Work cards.
+ */
+.card {
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+/* --- Utility: muted text ------------------------------------------------- */
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9375rem;
+}
+
+/* --- Experience timeline (T11) ------------------------------------------- */
+
+/*
+ * Vertical timeline. The line is a single border on .timeline; each entry
+ * adds a circular dot via ::before that sits on the line. Native <details>
+ * supplies the disclosure; CSS strips the default marker and adds a simple
+ * "+"/"−" affordance on the right.
+ */
+
+.timeline {
+  position: relative;
+  margin-block-start: var(--space-4);
+  border-left: 1px solid var(--border);
+  padding-inline-start: var(--space-5);
+}
+
+.timeline-entry {
+  position: relative;
+  margin-block: var(--space-5);
+}
+
+.timeline-entry:first-child {
+  margin-block-start: 0;
+}
+
+.timeline-entry:last-child {
+  margin-block-end: 0;
+}
+
+/* Dot marker on the timeline line. */
+.timeline-entry::before {
+  content: "";
+  position: absolute;
+  /* Align with the line at left:0 of padding-start. */
+  left: calc(-1 * var(--space-5) - 5px);
+  top: 0.55rem;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  /* A small ring so the dot reads cleanly over the section background. */
+  box-shadow: 0 0 0 3px var(--bg);
+}
+
+.timeline-entry > details {
+  margin: 0;
+}
+
+/* Strip default disclosure marker, replace with a "+"/"−" on the right. */
+.timeline-summary {
+  list-style: none;
+  cursor: pointer;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-1) 0;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition);
+}
+
+.timeline-summary::-webkit-details-marker {
+  display: none;
+}
+
+.timeline-summary::after {
+  content: "+";
+  margin-inline-start: auto;
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1;
+  width: 1ch;
+  text-align: center;
+  transition:
+    color var(--transition),
+    transform var(--transition);
+}
+
+details[open] > .timeline-summary::after {
+  content: "−";
+  color: var(--accent);
+}
+
+.timeline-summary:hover,
+.timeline-summary:focus-visible {
+  color: var(--accent);
+}
+
+/* Past entry has no <details> — match summary spacing for visual rhythm. */
+.timeline-entry-past .timeline-summary {
+  cursor: default;
+}
+
+.timeline-entry-past .timeline-summary::after {
+  content: none;
+}
+
+.timeline-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.timeline-company {
+  font-weight: 600;
+  color: var(--fg);
+}
+
+.timeline-sep {
+  color: var(--muted);
+}
+
+.timeline-title {
+  color: var(--fg);
+}
+
+.timeline-meta {
+  color: var(--muted);
+  font-size: 0.875rem;
+  letter-spacing: 0.01em;
+}
+
+.timeline-body {
+  margin-block-start: var(--space-2);
+  padding-block-end: var(--space-2);
+}
+
+.timeline-impact {
+  margin: 0 0 var(--space-3) 0;
+  color: var(--fg);
+}
+
+.timeline-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.timeline-past-note {
+  margin-block-start: var(--space-2);
+  margin-block-end: 0;
+}
+
+/* --- Skills (T11) -------------------------------------------------------- */
+
+.skill-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+@media (min-width: 30rem) {
+  .skill-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 48rem) {
+  .skill-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.skill-group-title {
+  font-size: var(--fs-h3);
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  margin: 0 0 var(--space-2) 0;
+}
+
+.skill-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.badge.badge-cert {
+  border-color: var(--accent);
+  color: var(--fg);
+  font-weight: 500;
+}
+
+/* --- Notable Work / projects (T12) --------------------------------------- */
+
+.project-intro {
+  margin: 0 0 var(--space-5) 0;
+  color: var(--muted);
+}
+
+.project-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin-block-end: var(--space-4);
+}
+
+.project-card h3 {
+  margin: 0;
+}
+
+.project-card p {
+  margin: 0;
+}
+
+.project-role {
+  font-size: 0.875rem;
+}
+
+.project-impact {
+  color: var(--fg);
+}
+
+.project-context {
+  color: var(--muted);
+}
+
+.project-details {
+  margin-block-start: var(--space-2);
+}
+
+.project-summary {
+  list-style: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+  color: var(--muted);
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition);
+}
+
+.project-summary::-webkit-details-marker {
+  display: none;
+}
+
+.project-summary::after {
+  content: "+";
+  color: var(--muted);
+  font-weight: 500;
+  line-height: 1;
+  width: 1ch;
+  text-align: center;
+  transition:
+    color var(--transition),
+    transform var(--transition);
+}
+
+details[open] > .project-summary::after {
+  content: "−";
+  color: var(--accent);
+}
+
+.project-summary:hover,
+.project-summary:focus-visible {
+  color: var(--accent);
+}
+
+.project-body {
+  margin-block-start: var(--space-2);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.project-actions {
+  margin: 0;
+  padding-inline-start: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  color: var(--fg);
+}
+
+.project-actions li {
+  margin: 0;
+}
+
+.project-os-heading {
+  margin-block-start: var(--space-6);
+}
+
+.project-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.project-link {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  flex: 1 1 16rem;
+  min-width: 0;
+  text-decoration: none;
+  color: inherit;
+  position: relative;
+}
+
+.project-link:hover {
+  color: inherit;
+}
+
+.project-link-name {
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.project-link-name::after {
+  content: "→";
+  color: var(--muted);
+  font-weight: 500;
+  transition: color var(--transition);
+}
+
+.project-link:hover .project-link-name::after,
+.project-link:focus-visible .project-link-name::after {
+  color: var(--accent);
+}
+
+.project-link-desc {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* --- Contact --------------------------------------------------------------
+ *
+ * Manifest-style cells (monospace key, e.g. "email:", plain-text value) —
+ * echoes the config/infra vocabulary the About section already frames the
+ * person around. One column on mobile; two on desktop, pairing
+ * email/phone, linkedin/github, location/remote so related facts read as
+ * a row. No section heading — see render() comment.
+ * ------------------------------------------------------------------------- */
+
+.contact-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-3);
+}
+
+@media (min-width: 30rem) {
+  .contact-rows {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.contact-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.contact-key {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  text-transform: lowercase;
+}
+
+.contact-key::after {
+  content: ":";
+}
+
+.contact-value {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-2);
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  color: var(--fg);
+  text-decoration: none;
+}
+
+.contact-link::after {
+  content: "→";
+  color: var(--muted);
+  transition:
+    color var(--transition),
+    transform var(--transition);
+}
+
+.contact-link:hover,
+.contact-link:focus-visible {
+  color: var(--accent);
+}
+
+.contact-link:hover::after,
+.contact-link:focus-visible::after {
+  color: var(--accent);
+  transform: translateX(2px);
+}
+
+.copy-email {
+  font: inherit;
+  font-size: 0.8125rem;
+  line-height: 1.2;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  transition:
+    color var(--transition),
+    border-color var(--transition),
+    background-color var(--transition);
+}
+
+.copy-email:hover,
+.copy-email:focus-visible {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.copy-email.is-copied {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* --- Reduced motion ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Skip the fade-in entirely — sections render in their final state. */
+  section {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Disable card hover translate; retain border-color shift only. */
+  .card {
+    transition: none;
+  }
+
+  .card:hover {
+    transform: none;
+  }
+
+  /* Copy-email button: drop the color/border transitions under reduced-motion. */
+  .copy-email {
+    transition: none;
+  }
+}
+
+/* --- Print (T13, carry-over from T12; refined further in T19) ------------- */
+
+/*
+ * Goal here is "if printed today, content is at least readable and complete".
+ * T19 will refine for the actual PDF generation. Forces every <details> open
+ * (so progressive-disclosure depth blocks land in the resume), strips
+ * interactive controls, and removes background ink waste.
+ */
+@media print {
+  body {
+    background: white !important;
+    color: black !important;
+  }
+
+  /* Sticky header would otherwise overlap printed content. */
+  #app > header {
+    position: static;
+    background: white !important;
+    border-bottom: 1px solid #ccc;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  /* Hide non-content controls. */
+  .skip-link,
+  .theme-toggle,
+  .copy-email,
+  #app > header nav {
+    display: none !important;
+  }
+
+  /* A downloaded/printed PDF can't usefully "download" itself — point back
+     to the live site instead. */
+  .hero-cta-download {
+    display: none !important;
+  }
+
+  .hero-cta-website {
+    display: inline-flex !important;
+    background: white !important;
+    color: black !important;
+    border-color: #999 !important;
+  }
+
+  /* Force every <details> open so the depth content prints. */
+  details,
+  details[open] {
+    display: block;
+  }
+
+  details > *:not(summary) {
+    display: revert !important;
+  }
+
+  /* Make the summary read as a normal heading row, not a control. */
+  summary {
+    cursor: default;
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .timeline-summary::after,
+  .project-summary::after,
+  .project-link-name::after,
+  .contact-link::after {
+    content: none !important;
+  }
+
+  /* Re-enable section visibility — scroll-fade must not hide content from
+     the printer when the JS observer never fires (or when it has not yet
+     marked sections visible). */
+  section {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  /* Cards: drop shadows + borders that ink wastefully. */
+  .card {
+    box-shadow: none !important;
+    border-color: #ccc !important;
+    transform: none !important;
+  }
+
+  /* Links print as their underlying text — full URLs would clutter; keep the
+     visible label. The PDF resume in T19 may revisit this. */
+  a {
+    color: black !important;
+    text-decoration: none;
+  }
+
+  /* Keep each timeline entry / project card intact across a page break
+     rather than splitting mid-entry (e.g. "Past experience" head stranded
+     at the bottom of a page, its note pushed to the next). `page-break-*`
+     is the property Chromium's print pipeline (used by the cvPdf Nix
+     derivation) actually honors; `break-*` is included for spec parity. */
+  .timeline-entry,
+  .card {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Don't strand a section heading alone at the bottom of a page. */
+  h2,
+  h3 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+}

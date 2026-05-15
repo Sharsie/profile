@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Lukáš Čech – DevOps Architect</title>
+    <meta
+      name="description"
+      content="Lukáš Čech — DevOps Architect. Infrastructure, Go, TypeScript, Kubernetes, Nix. Based in Central Bohemia, Czechia."
+    />
+    <meta name="author" content="Lukáš Čech" />
+    <link rel="canonical" href="https://profile.c3c.cz" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Lukáš Čech – DevOps Architect" />
+    <meta
+      property="og:description"
+      content="Lukáš Čech — DevOps Architect. Infrastructure, Go, TypeScript, Kubernetes, Nix. Based in Central Bohemia, Czechia."
+    />
+    <meta property="og:url" content="https://profile.c3c.cz" />
+    <meta property="og:image" content="https://profile.c3c.cz/og-image.jpg" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Lukáš Čech – DevOps Architect" />
+    <meta
+      name="twitter:description"
+      content="Lukáš Čech — DevOps Architect. Infrastructure, Go, TypeScript, Kubernetes, Nix. Based in Central Bohemia, Czechia."
+    />
+
+    <!-- Color scheme: matches the --bg tokens in src/style.css. -->
+    <meta name="color-scheme" content="light dark" />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#ffffff"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#111418"
+    />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!--
+      FOUC-preventing pre-paint: set data-theme before the module bundle loads
+      so theme.ts does not repaint on first frame. Mirrors the resolution
+      order in src/theme.ts (localStorage > prefers-color-scheme).
+    -->
+    <script>
+      (function () {
+        try {
+          var s = localStorage.getItem("theme");
+          var t =
+            s === "light" || s === "dark"
+              ? s
+              : matchMedia("(prefers-color-scheme: dark)").matches
+                ? "dark"
+                : "light";
+          document.documentElement.setAttribute("data-theme", t);
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

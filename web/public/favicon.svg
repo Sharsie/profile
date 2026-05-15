@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    :root { color: #0b0b0d; }
+    @media (prefers-color-scheme: dark) { :root { color: #ffffff; } }
+  </style>
+  <g fill="currentColor">
+    <rect x="6" y="6" width="3" height="20" rx="1" />
+    <rect x="6" y="23" width="11" height="3" rx="1" />
+    <path d="M22 11 L26 7 L26 11 Z" />
+    <path d="M19 14 h7 v3 h-7 a3 3 0 0 0 0 6 h6 v3 h-6 a6 6 0 0 1 0 -12 z" />
+  </g>
+</svg>
