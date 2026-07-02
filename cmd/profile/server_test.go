@@ -83,3 +83,71 @@ func TestNotFound(t *testing.T) {
 		t.Fatalf("status: got %d, want %d", resp.StatusCode, http.StatusNotFound)
 	}
 }
+
+func TestETagPresent(t *testing.T) {
+	t.Parallel()
+	ts := startTestServer(t)
+
+	resp, _ := getBody(t, ts, "/assets/app-abc123.js")
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status: got %d, want %d", resp.StatusCode, http.StatusOK)
+	}
+	etag := resp.Header.Get("ETag")
+	if etag == "" {
+		t.Fatal("ETag header missing")
+	}
+	if !strings.HasPrefix(etag, `"`) || !strings.HasSuffix(etag, `"`) {
+		t.Fatalf("ETag not quoted: got %q", etag)
+	}
+}
+
+func TestETagRootMatchesIndex(t *testing.T) {
+	t.Parallel()
+	ts := startTestServer(t)
+
+	rootResp, _ := getBody(t, ts, "/")
+	indexResp, _ := getBody(t, ts, "/index.html")
+
+	rootETag := rootResp.Header.Get("ETag")
+	indexETag := indexResp.Header.Get("ETag")
+	if rootETag == "" || indexETag == "" {
+		t.Fatalf("ETag missing: root=%q index=%q", rootETag, indexETag)
+	}
+	if rootETag != indexETag {
+		t.Fatalf("ETag mismatch: / got %q, /index.html got %q", rootETag, indexETag)
+	}
+}
+
+func TestETagConditionalRequestReturns304(t *testing.T) {
+	t.Parallel()
+	ts := startTestServer(t)
+
+	resp, _ := getBody(t, ts, "/assets/app-abc123.js")
+	etag := resp.Header.Get("ETag")
+	if etag == "" {
+		t.Fatal("ETag header missing on initial request")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, ts.URL+"/assets/app-abc123.js", nil)
+	if err != nil {
+		t.Fatalf("build request: %v", err)
+	}
+	req.Header.Set("If-None-Match", etag)
+
+	conditional, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatalf("conditional GET: %v", err)
+	}
+	defer func() { _ = conditional.Body.Close() }()
+
+	if conditional.StatusCode != http.StatusNotModified {
+		t.Fatalf("status: got %d, want %d", conditional.StatusCode, http.StatusNotModified)
+	}
+	body, err := io.ReadAll(conditional.Body)
+	if err != nil {
+		t.Fatalf("read body: %v", err)
+	}
+	if len(body) != 0 {
+		t.Fatalf("expected empty body for 304, got %d bytes", len(body))
+	}
+}
